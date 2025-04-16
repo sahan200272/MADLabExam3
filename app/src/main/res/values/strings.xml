@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">MADLabExam3</string>
+    <string name="welcome_msg">Hi, Welcome Back</string>
+    <string name="total_balance">Total Balance</string>
+    <string name="total_expense">Total Expense</string>
+    <string name="food">Food</string>
+    <string name="transport">Transport</string>
+    <string name="bill">Bill</string>
+    <string name="education">Education</string>
+    <string name="entertainment">Entertainment</string>
+
+    <string-array name="category_array">
+        <item>Food</item>
+        <item>Transport</item>
+        <item>Bill</item>
+        <item>Entertainment</item>
+        <item>Education</item>
+    </string-array>
+</resources>
