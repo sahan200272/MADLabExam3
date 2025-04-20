@@ -8,19 +8,23 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.util.Calendar
 
 class AddTransaction : AppCompatActivity() {
 
     // Declare views as lateinit
-    lateinit var tvAutoComplete: AutoCompleteTextView
-    lateinit var tvDate: EditText
-    lateinit var btnDate: Button
-    lateinit var radioGroupForTransaction: RadioGroup
-    lateinit var etTitle: EditText
-    lateinit var etAmount: EditText
-    lateinit var btnAddTransaction: Button
-    var calendar = Calendar.getInstance()
+    private lateinit var tvAutoComplete: AutoCompleteTextView
+    private lateinit var tvDate: EditText
+    private lateinit var btnDate: Button
+    private lateinit var radioGroupForTransaction: RadioGroup
+    private lateinit var etTitle: EditText
+    private lateinit var etAmount: EditText
+    private lateinit var btnAddTransaction: Button
+
+    private var calendar = Calendar.getInstance()
+
+    private lateinit var bottomNavigationView:BottomNavigationView
 
     // Function onCreate()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +40,7 @@ class AddTransaction : AppCompatActivity() {
         radioGroupForTransaction = findViewById(R.id.radioGroupForTransaction)
         tvAutoComplete = findViewById(R.id.tvAutoComplete)
         btnAddTransaction = findViewById(R.id.btnAddTransaction)
+        bottomNavigationView = findViewById(R.id.bottomNavigationView)
 
         // Handle Window Insets for Edge to Edge mode
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -54,6 +59,34 @@ class AddTransaction : AppCompatActivity() {
         val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, items)
         tvAutoComplete.setAdapter(adapter)
 
+        // Set up BottomNavigationView item click listener
+        bottomNavigationView.setOnItemSelectedListener { item ->
+
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+//                R.id.nav_transaction -> {
+//                    val intent = Intent(this, AddTransaction::class.java)
+//                    startActivity(intent)
+//                    true
+//                }
+//                R.id.nav_budget -> {
+//                    val intent = Intent(this, Budget::class.java)
+//                    startActivity(intent)
+//                    true
+//                }
+//                R.id.nav_settings -> {
+//                    val intent = Intent(this, Settings::class.java)
+//                    startActivity(intent)
+//                    true
+//                }
+                else -> false
+            }
+        }
+
         // Handle Add Transaction button click
         btnAddTransaction.setOnClickListener {
 
@@ -70,15 +103,11 @@ class AddTransaction : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val title = etTitle.text.toString()
             val amount = etAmount.text.toString()
-            val dropDown = tvAutoComplete.text.toString()
 
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra("selectedRadioBtn", value)
-            intent.putExtra("title", title)
             intent.putExtra("amount", amount)
-            intent.putExtra("dropDown", dropDown)
 
             startActivity(intent)
         }
