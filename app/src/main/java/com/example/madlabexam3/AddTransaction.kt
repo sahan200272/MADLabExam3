@@ -73,11 +73,11 @@ class AddTransaction : AppCompatActivity() {
 //                    startActivity(intent)
 //                    true
 //                }
-//                R.id.nav_budget -> {
-//                    val intent = Intent(this, Budget::class.java)
-//                    startActivity(intent)
-//                    true
-//                }
+                R.id.nav_budget -> {
+                    val intent = Intent(this, MonthlyBudgetSetup::class.java)
+                    startActivity(intent)
+                    true
+                }
 //                R.id.nav_settings -> {
 //                    val intent = Intent(this, Settings::class.java)
 //                    startActivity(intent)

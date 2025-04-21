@@ -1,13 +1,17 @@
 <resources>
     <string name="app_name">MADLabExam3</string>
-    <string name="welcome_msg">Hi, Welcome Back</string>
     <string name="total_balance">Total Balance</string>
-    <string name="total_expense">Total Expense</string>
+    <string name="total_balance_value">800</string>
+    <string name="total_income">Total Income</string>
+    <string name="total_expenses">Total Expenses</string>
+    <string name="total_income_amount">1000</string>
+    <string name="total_expense_amount">200</string>
     <string name="food">Food</string>
     <string name="transport">Transport</string>
     <string name="bill">Bill</string>
-    <string name="education">Education</string>
     <string name="entertainment">Entertainment</string>
+    <string name="education">Education</string>
+    <string name="add_new_transaction_btn">Add New Transaction</string>
 
     <string-array name="category_array">
         <item>Food</item>
@@ -16,4 +20,20 @@
         <item>Entertainment</item>
         <item>Education</item>
     </string-array>
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

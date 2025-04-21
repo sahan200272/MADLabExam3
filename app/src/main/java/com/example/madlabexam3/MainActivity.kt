@@ -6,12 +6,12 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,8 +21,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnAddExpenses: Button
     private lateinit var btnDelete:Button
 
-    lateinit var sharedPreferences: SharedPreferences
-    lateinit var editor: SharedPreferences.Editor
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var editor: SharedPreferences.Editor
+
+    private lateinit var bottomNavigationView: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,13 +40,15 @@ class MainActivity : AppCompatActivity() {
         etTotalIncome = findViewById(R.id.etTotalIncome)
         etTotalExpense = findViewById(R.id.etTotalExpense)
 
+        bottomNavigationView = findViewById(R.id.bottomNavigationView)
+
         sharedPreferences = getSharedPreferences("TransactionData", MODE_PRIVATE)
         editor = sharedPreferences.edit()
 
         loadSaveData();
 
-        var selectedRadioBtn = intent.getStringExtra("selectedRadioBtn")
-        var amountString = intent.getStringExtra("amount")
+        val selectedRadioBtn = intent.getStringExtra("selectedRadioBtn")
+        val amountString = intent.getStringExtra("amount")
 
         if(!amountString.isNullOrEmpty()){
 
@@ -52,11 +56,11 @@ class MainActivity : AppCompatActivity() {
 
             if(selectedRadioBtn == "income"){
 
-                var previousIncome = sharedPreferences.getFloat("totalIncome", 0.0f)
-                var prevTotalExpense = sharedPreferences.getFloat("totalExpense", 0.0f)
+                val previousIncome = sharedPreferences.getFloat("totalIncome", 0.0f)
+                val prevTotalExpense = sharedPreferences.getFloat("totalExpense", 0.0f)
 
-                var totalIncome = previousIncome + amount
-                var totalBalance = totalIncome - prevTotalExpense
+                val totalIncome = previousIncome + amount
+                val totalBalance = totalIncome - prevTotalExpense
 
                 editor.putFloat("totalIncome", totalIncome)
                 editor.putFloat("totalBalance", totalBalance)
@@ -64,11 +68,11 @@ class MainActivity : AppCompatActivity() {
             }
             else{
 
-                var previousExpense = sharedPreferences.getFloat("totalExpense", 0.0f)
-                var prevTotalIncome = sharedPreferences.getFloat("totalIncome", 0.0f)
+                val previousExpense = sharedPreferences.getFloat("totalExpense", 0.0f)
+                val prevTotalIncome = sharedPreferences.getFloat("totalIncome", 0.0f)
 
-                var totalExpense = previousExpense + amount
-                var totalBalance = prevTotalIncome - totalExpense
+                val totalExpense = previousExpense + amount
+                val totalBalance = prevTotalIncome - totalExpense
 
                 editor.putFloat("totalExpense", totalExpense)
                 editor.putFloat("totalBalance", totalBalance)
@@ -90,6 +94,33 @@ class MainActivity : AppCompatActivity() {
             editor.clear()
             editor.apply()
             loadSaveData()
+        }
+
+        bottomNavigationView.setOnItemSelectedListener { item ->
+
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+//                R.id.nav_transaction -> {
+//                    val intent = Intent(this, AddTransaction::class.java)
+//                    startActivity(intent)
+//                    true
+//                }
+                R.id.nav_budget -> {
+                    val intent = Intent(this, BudgetDetails::class.java)
+                    startActivity(intent)
+                    true
+                }
+//                R.id.nav_settings -> {
+//                    val intent = Intent(this, Settings::class.java)
+//                    startActivity(intent)
+//                    true
+//                }
+                else -> false
+            }
         }
     }
 
