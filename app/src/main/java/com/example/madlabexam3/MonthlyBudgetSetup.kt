@@ -26,20 +26,17 @@ class MonthlyBudgetSetup : Fragment() {
         etBudget = rootView.findViewById(R.id.etBudget)
 
         btnSaveBudget.setOnClickListener {
-            // Get the entered budget amount
+
             val budgetAmount = etBudget.text.toString()
 
-            // Check if the budget amount is valid (not empty)
             if (budgetAmount.isNotEmpty()) {
-                // For now, just display a Toast as feedback
+
                 Toast.makeText(activity, "Budget saved: $budgetAmount", Toast.LENGTH_SHORT).show()
                 val intent = Intent(activity, BudgetDetails::class.java)
                 intent.putExtra("budgetAmount", budgetAmount)
                 startActivity(intent)
 
-                // You can save the budget to SharedPreferences or a database here
             } else {
-                // Show an error message if the input is empty
                 Toast.makeText(activity, "Please enter a valid budget", Toast.LENGTH_SHORT).show()
             }
         }

@@ -59,7 +59,7 @@ class AddTransaction : AppCompatActivity() {
         val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, items)
         tvAutoComplete.setAdapter(adapter)
 
-        // Set up BottomNavigationView item click listener
+        bottomNavigationView = findViewById(R.id.bottomNavigationView)
         bottomNavigationView.setOnItemSelectedListener { item ->
 
             when (item.itemId) {
@@ -68,21 +68,21 @@ class AddTransaction : AppCompatActivity() {
                     startActivity(intent)
                     true
                 }
-//                R.id.nav_transaction -> {
-//                    val intent = Intent(this, AddTransaction::class.java)
-//                    startActivity(intent)
-//                    true
-//                }
-                R.id.nav_budget -> {
-                    val intent = Intent(this, MonthlyBudgetSetup::class.java)
+                R.id.nav_transaction -> {
+                    val intent = Intent(this, TransactionManagement::class.java)
                     startActivity(intent)
                     true
                 }
-//                R.id.nav_settings -> {
-//                    val intent = Intent(this, Settings::class.java)
-//                    startActivity(intent)
-//                    true
-//                }
+                R.id.nav_budget -> {
+                    val intent = Intent(this, BudgetDetails::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.nav_settings -> {
+                    val intent = Intent(this, Setting::class.java)
+                    startActivity(intent)
+                    true
+                }
                 else -> false
             }
         }
@@ -103,11 +103,17 @@ class AddTransaction : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            val title = etTitle.text.toString()
             val amount = etAmount.text.toString()
+            val category = tvAutoComplete.text.toString()
+            val date = tvDate.text.toString()
 
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra("selectedRadioBtn", value)
+            intent.putExtra("title", title)
             intent.putExtra("amount", amount)
+            intent.putExtra("category", category)
+            intent.putExtra("date", date)
 
             startActivity(intent)
         }

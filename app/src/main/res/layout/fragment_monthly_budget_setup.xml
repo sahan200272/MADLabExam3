@@ -8,12 +8,6 @@
     android:orientation="vertical"
     tools:context=".MonthlyBudgetSetup">
 
-    <!-- Title Text -->
-
-    <!-- EditText for budget input -->
-
-    <!-- Button to save the budget -->
-
     <TextView
         android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
