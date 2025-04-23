@@ -7,8 +7,10 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.madlabexam3.models.Transaction
@@ -17,10 +19,15 @@ import com.google.gson.Gson
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var etTotalBalance:EditText
-    private lateinit var etTotalIncome:EditText
-    private lateinit var etTotalExpense:EditText
-    private lateinit var btnDelete:Button
+    private lateinit var tvTotalBalance:TextView
+    private lateinit var tvTotalIncome:TextView
+    private lateinit var tvTotalExpense:TextView
+
+    private lateinit var cvFood:CardView
+    private lateinit var cvTransport:CardView
+    private lateinit var cvBill:CardView
+    private lateinit var cvEntertainment:CardView
+    private lateinit var cvEducation:CardView
 
     //create shared preferences variable
     private lateinit var sharedPreferences: SharedPreferences
@@ -40,9 +47,53 @@ class MainActivity : AppCompatActivity() {
         }
 
         //initialize variables
-        etTotalBalance = findViewById(R.id.etTotalBalance)
-        etTotalIncome = findViewById(R.id.etTotalIncome)
-        etTotalExpense = findViewById(R.id.etTotalExpense)
+        tvTotalBalance = findViewById(R.id.tvTotalBalance)
+        tvTotalIncome = findViewById(R.id.tvTotalIncome)
+        tvTotalExpense = findViewById(R.id.tvTotalExpense)
+
+        //Card views initialize
+        cvFood = findViewById(R.id.cvFood)
+        cvTransport = findViewById(R.id.cvTransport)
+        cvBill = findViewById(R.id.cvBill)
+        cvEntertainment = findViewById(R.id.cvEntertainment)
+        cvEducation = findViewById(R.id.cvEducation)
+
+        val cardViews = listOf(cvFood, cvTransport, cvBill, cvEntertainment, cvEducation)
+
+        //Set on click listener for each category go to the relevant screen
+        cardViews.forEach{cardView ->
+            run {
+                cardView.setOnClickListener {
+                    when (cardView.id) {
+                        R.id.cvFood -> {
+                            val intent = Intent(this, CategorySummary::class.java)
+                            intent.putExtra("selectedCategory", "Food")
+                            startActivity(intent)
+                        }
+                        R.id.cvTransport -> {
+                            val intent = Intent(this, CategorySummary::class.java)
+                            intent.putExtra("selectedCategory", "Transport")
+                            startActivity(intent)
+                        }
+                        R.id.cvBill -> {
+                            val intent = Intent(this, CategorySummary::class.java)
+                            intent.putExtra("selectedCategory", "Bill")
+                            startActivity(intent)
+                        }
+                        R.id.cvEntertainment -> {
+                            val intent = Intent(this, CategorySummary::class.java)
+                            intent.putExtra("selectedCategory", "Entertainment")
+                            startActivity(intent)
+                        }
+                        R.id.cvEducation -> {
+                            val intent = Intent(this, CategorySummary::class.java)
+                            intent.putExtra("selectedCategory", "Education")
+                            startActivity(intent)
+                        }
+                    }
+                }
+            }
+        }
 
         sharedPreferences = getSharedPreferences("TransactionData", MODE_PRIVATE)
         editor = sharedPreferences.edit()
@@ -102,13 +153,6 @@ class MainActivity : AppCompatActivity() {
             loadSaveData()
         }
 
-        btnDelete = findViewById(R.id.btnDelete)
-        btnDelete.setOnClickListener{
-            editor.clear()
-            editor.apply()
-            loadSaveData()
-        }
-
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
         bottomNavigationView.setOnItemSelectedListener { item ->
 
@@ -141,9 +185,9 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun loadSaveData() {
 
-        etTotalIncome.setText(sharedPreferences.getFloat("totalIncome", 0.0f).toString())
-        etTotalExpense.setText(sharedPreferences.getFloat("totalExpense", 0.0f).toString())
-        etTotalBalance.setText(sharedPreferences.getFloat("totalBalance", 0.0f).toString())
+        tvTotalIncome.text = sharedPreferences.getFloat("totalIncome", 0.0f).toString()
+        tvTotalExpense.text = sharedPreferences.getFloat("totalExpense", 0.0f).toString()
+        tvTotalBalance.text = sharedPreferences.getFloat("totalBalance", 0.0f).toString()
     }
 
     private fun saveTransaction(context: Context, transaction: Transaction) {

@@ -45,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
-            android:text="progress"
+            android:text="Progress"
             android:textColor="@color/black"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -55,14 +55,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            app:indicatorSize="150dp"
-            app:trackThickness="8dp"
+            android:layout_marginTop="16dp"
             app:indicatorColor="@color/secondary_color"
+            app:indicatorSize="150dp"
             app:trackColor="@android:color/darker_gray"
-            android:layout_marginTop="16dp" />
+            app:trackThickness="8dp" />
 
-
-
+        <TextView
+            android:id="@+id/tvProgressPercentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:text="0%"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnBudgetSetup"

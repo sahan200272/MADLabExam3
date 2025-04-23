@@ -13,6 +13,9 @@
         android:theme="@style/Theme.MADLabExam3"
         tools:targetApi="31">
         <activity
+            android:name=".CategorySummary"
+            android:exported="false" />
+        <activity
             android:name=".Setting"
             android:exported="false" />
         <activity
@@ -30,6 +33,9 @@
         <activity
             android:name=".AddTransaction"
             android:exported="true" />
+        <activity
+            android:name=".EditTransaction"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

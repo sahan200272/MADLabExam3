@@ -3,12 +3,11 @@ package com.example.madlabexam3
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
@@ -16,16 +15,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.progressindicator.CircularProgressIndicator
 
 class BudgetDetails : AppCompatActivity() {
 
     private lateinit var btnBudgetSetup: Button
-    private lateinit var etBudget:EditText
+    private lateinit var etBudget: EditText
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var editor: SharedPreferences.Editor
-
-    private lateinit var progressBarBudget:ProgressBar
-
+    private lateinit var progressBarBudget: CircularProgressIndicator
+    private lateinit var tvProgressPercentage: TextView
     private lateinit var bottomNavigationView: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,10 +40,10 @@ class BudgetDetails : AppCompatActivity() {
         btnBudgetSetup = findViewById(R.id.btnBudgetSetup)
         etBudget = findViewById(R.id.etBudget)
         progressBarBudget = findViewById(R.id.progressBarBudget)
+        tvProgressPercentage = findViewById(R.id.tvProgressPercentage)
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
         bottomNavigationView.setOnItemSelectedListener { item ->
-
             when (item.itemId) {
                 R.id.nav_home -> {
                     val intent = Intent(this, MainActivity::class.java)
@@ -73,34 +72,23 @@ class BudgetDetails : AppCompatActivity() {
         sharedPreferences = getSharedPreferences("Budget", MODE_PRIVATE)
         editor = sharedPreferences.edit()
 
-        sharedPreferences = getSharedPreferences("TransactionData", MODE_PRIVATE)
-        editor = sharedPreferences.edit()
-
         loadSavedData()
 
         val budgetValueString = intent.getStringExtra("budgetAmount")
 
         if(!budgetValueString.isNullOrEmpty()){
-
-            val budgetValue = budgetValueString.toFloat()
-            val totalExpense = sharedPreferences.getFloat("totalExpense", 0.0f)
-
-            val progress = (totalExpense / budgetValue) * 100
-
-            progressBarBudget.progress = progress.toInt()
-
-            if (progress >= 80) {
-                showBudgetAlert()
+            try {
+                val budgetValue = budgetValueString.toFloat()
+                updateProgress(budgetValue)
+                editor.putFloat("budget", budgetValue)
+                editor.apply()
+                loadSavedData()
+            } catch (e: NumberFormatException) {
+                Toast.makeText(this, "Invalid budget amount", Toast.LENGTH_SHORT).show()
             }
-
-            editor.putFloat("budget", budgetValue)
-            editor.apply()
-
-            loadSavedData()
         }
 
         btnBudgetSetup.setOnClickListener {
-
             val newFragment = MonthlyBudgetSetup()
             val trans = supportFragmentManager.beginTransaction()
             trans.replace(R.id.main, newFragment)
@@ -110,41 +98,44 @@ class BudgetDetails : AppCompatActivity() {
 
     private fun showBudgetAlert() {
         val builder = AlertDialog.Builder(this)
-
         builder.setTitle("Budget Alert")
-
         builder.setMessage("You are about to exceed your monthly budget. Would you like to review your expenses?")
-
         builder.setPositiveButton("Review") { dialog, which ->
             openExpenseReviewActivity()
         }
-
         builder.setNegativeButton("Dismiss") { dialog, which ->
             dialog.dismiss()
         }
-
         builder.create().show()
     }
 
     private fun openExpenseReviewActivity() {
-
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
 
     @SuppressLint("SetTextI18n")
-    private fun loadSavedData(){
-
+    private fun loadSavedData() {
         val budgetValue = sharedPreferences.getFloat("budget", 0.0f)
-        val totalExpense = sharedPreferences.getFloat("totalExpense", 0.0f)
+        etBudget.setText(budgetValue.toString())
+        updateProgress(budgetValue)
+    }
 
-        val progress = (totalExpense / budgetValue) * 100
-        progressBarBudget.progress = progress.toInt()
+    private fun updateProgress(budgetValue: Float) {
+        if (budgetValue > 0) {
+            val totalExpense = sharedPreferences.getFloat("totalExpense", 0.0f)
+            val progress = (totalExpense / budgetValue) * 100
+            val progressInt = progress.toInt().coerceIn(0, 100)
+            
+            progressBarBudget.progress = progressInt
+            tvProgressPercentage.text = "$progressInt%"
 
-        if (progress >= 80) {
-            showBudgetAlert()
+            if (progress >= 80) {
+                showBudgetAlert()
+            }
+        } else {
+            progressBarBudget.progress = 0
+            tvProgressPercentage.text = "0%"
         }
-
-        etBudget.setText(sharedPreferences.getFloat("budget", 0.0f).toString())
     }
 }
