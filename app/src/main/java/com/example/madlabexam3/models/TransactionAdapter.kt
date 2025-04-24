@@ -3,7 +3,6 @@ package com.example.madlabexam3.models
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,6 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.madlabexam3.EditTransaction
 import com.example.madlabexam3.R
-import com.example.madlabexam3.models.Transaction
 import com.google.gson.Gson
 
 class TransactionAdapter(private val transactions: List<Transaction>) :
