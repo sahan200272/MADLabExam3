@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -12,16 +11,17 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.madlabexam3.models.Transaction
-import com.example.madlabexam3.models.TransactionAdapter  // Assuming you have a TransactionAdapter class
+import com.example.madlabexam3.models.TransactionAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
 
 class TransactionManagement : AppCompatActivity() {
 
     private lateinit var bottomNavigationView: BottomNavigationView
-    private lateinit var btnAddTransaction: Button
+    private lateinit var btnAddTransaction: FloatingActionButton
     private lateinit var recyclerView: RecyclerView
-    private lateinit var dataList: List<Transaction>  // This will hold the list of transactions
+    private lateinit var dataList: List<Transaction>
 
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var editor: SharedPreferences.Editor
@@ -38,15 +38,25 @@ class TransactionManagement : AppCompatActivity() {
             insets
         }
 
-        // Initialize the Add Transaction button
+        initializeViews()
+        setupClickListeners()
+        setupRecyclerView()
+    }
+
+    private fun initializeViews() {
         btnAddTransaction = findViewById(R.id.btnAddTransaction)
+        bottomNavigationView = findViewById(R.id.bottomNavigationView)
+        recyclerView = findViewById(R.id.recyclerView)
+        sharedPreferences = getSharedPreferences("TransactionData", MODE_PRIVATE)
+        editor = sharedPreferences.edit()
+    }
+
+    private fun setupClickListeners() {
         btnAddTransaction.setOnClickListener {
             val intent = Intent(this, AddTransaction::class.java)
             startActivity(intent)
         }
 
-        // Initialize the BottomNavigationView and set item click listeners
-        bottomNavigationView = findViewById(R.id.bottomNavigationView)
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
@@ -72,18 +82,11 @@ class TransactionManagement : AppCompatActivity() {
                 else -> false
             }
         }
+    }
 
-        sharedPreferences = getSharedPreferences("TransactionData", MODE_PRIVATE)
-        editor = sharedPreferences.edit()
-
-        // Initialize RecyclerView and set its layout manager
-        recyclerView = findViewById(R.id.recyclerView)
+    private fun setupRecyclerView() {
         recyclerView.layoutManager = LinearLayoutManager(this)
-
-        // Fetch the transactions from SharedPreferences
         dataList = getTransactionsFromSharedPreferences(this)
-
-        // Set up the adapter with the retrieved data
         val adapter = TransactionAdapter(dataList.toMutableList())
         recyclerView.adapter = adapter
     }

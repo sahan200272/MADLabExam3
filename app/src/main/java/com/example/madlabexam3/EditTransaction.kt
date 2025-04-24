@@ -180,35 +180,39 @@ class EditTransaction : AppCompatActivity() {
             val oldAmount = oldTransaction.amount
             val oldType = if (oldAmount >= 0) "income" else "expense"
 
-            // Update the transaction
-            existingTransactions[position] = Transaction(title, amount, category, date)
+            // Update the transaction with proper sign for expense
+            val newAmount = if (type == "expense") -amount else amount
+            existingTransactions[position] = Transaction(title, newAmount, category, date)
             
             // Update the list in SharedPreferences
             val updatedJson = gson.toJson(existingTransactions)
             editor.putString("transactions_list", updatedJson)
 
-            // Update total income/expense based on the transaction type
+            // Get current totals
             val previousIncome = sharedPref.getFloat("totalIncome", 0.0f)
             val previousExpense = sharedPref.getFloat("totalExpense", 0.0f)
 
-            // Subtract the old amount from the appropriate total
-            if (oldType == "income") {
-                editor.putFloat("totalIncome", previousIncome - oldAmount)
+            // Calculate new totals
+            val newIncome = if (oldType == "income") {
+                if (type == "income") previousIncome - oldAmount + amount
+                else previousIncome - oldAmount
             } else {
-                editor.putFloat("totalExpense", previousExpense - oldAmount)
+                if (type == "income") previousIncome + amount
+                else previousIncome
             }
 
-            // Add the new amount to the appropriate total
-            if (type == "income") {
-                editor.putFloat("totalIncome", previousIncome - oldAmount + amount)
+            val newExpense = if (oldType == "expense") {
+                if (type == "expense") previousExpense - Math.abs(oldAmount) + amount
+                else previousExpense - Math.abs(oldAmount)
             } else {
-                editor.putFloat("totalExpense", previousExpense - oldAmount + amount)
+                if (type == "expense") previousExpense + amount
+                else previousExpense
             }
 
-            // Update total balance
-            val totalIncome = if (type == "income") previousIncome - oldAmount + amount else previousIncome - oldAmount
-            val totalExpense = if (type == "expense") previousExpense - oldAmount + amount else previousExpense - oldAmount
-            editor.putFloat("totalBalance", totalIncome - totalExpense)
+            // Update totals
+            editor.putFloat("totalIncome", newIncome)
+            editor.putFloat("totalExpense", newExpense)
+            editor.putFloat("totalBalance", newIncome - newExpense)
 
             editor.apply()
         }

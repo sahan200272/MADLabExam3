@@ -22,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvTotalBalance:TextView
     private lateinit var tvTotalIncome:TextView
     private lateinit var tvTotalExpense:TextView
+    private lateinit var btnDelete:Button
 
     private lateinit var cvFood:CardView
     private lateinit var cvTransport:CardView
@@ -113,42 +114,40 @@ class MainActivity : AppCompatActivity() {
             val category = categoryGet.toString()
             val date = dateGet.toString()
 
-            val transaction = Transaction(title, amount, category, date)
+            // Store expense as negative amount
+            val transactionAmount = if (selectedRadioBtn == "expense") -amount else amount
+            val transaction = Transaction(title, transactionAmount, category, date)
             saveTransaction(this, transaction)
 
+            val previousIncome = sharedPreferences.getFloat("totalIncome", 0.0f)
+            val previousExpense = sharedPreferences.getFloat("totalExpense", 0.0f)
+
             if(selectedRadioBtn == "income"){
-
-                val previousIncome = sharedPreferences.getFloat("totalIncome", 0.0f)
-                val prevTotalExpense = sharedPreferences.getFloat("totalExpense", 0.0f)
-
                 val totalIncome = previousIncome + amount
-                val totalBalance = totalIncome - prevTotalExpense
+                val totalBalance = totalIncome - previousExpense
 
                 editor.putFloat("totalIncome", totalIncome)
                 editor.putFloat("totalBalance", totalBalance)
-                editor.putString("title", title)
-                editor.putString("category", category)
-                editor.putString("date", date)
-
-                editor.apply()
             }
             else{
-
-                val previousExpense = sharedPreferences.getFloat("totalExpense", 0.0f)
-                val prevTotalIncome = sharedPreferences.getFloat("totalIncome", 0.0f)
-
                 val totalExpense = previousExpense + amount
-                val totalBalance = prevTotalIncome - totalExpense
+                val totalBalance = previousIncome - totalExpense
 
                 editor.putFloat("totalExpense", totalExpense)
                 editor.putFloat("totalBalance", totalBalance)
-                editor.putString("title", title)
-                editor.putString("category", category)
-                editor.putString("date", date)
-
-                editor.apply()
             }
 
+            editor.putString("title", title)
+            editor.putString("category", category)
+            editor.putString("date", date)
+            editor.apply()
+            loadSaveData()
+        }
+
+        btnDelete = findViewById(R.id.btnDelete)
+        btnDelete.setOnClickListener{
+
+            editor.clear()
             editor.apply()
             loadSaveData()
         }

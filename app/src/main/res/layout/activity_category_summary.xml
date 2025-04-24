@@ -36,6 +36,19 @@
         app:trackColor="@android:color/darker_gray"
         app:trackThickness="8dp" />
 
+    <TextView
+        android:id="@+id/tvProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0%"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/progressBarCategory"
+        app:layout_constraintEnd_toEndOf="@+id/progressBarCategory"
+        app:layout_constraintStart_toStartOf="@+id/progressBarCategory"
+        app:layout_constraintTop_toTopOf="@+id/progressBarCategory" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewCategory"
         android:layout_width="match_parent"

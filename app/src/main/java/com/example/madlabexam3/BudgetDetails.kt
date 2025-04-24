@@ -6,7 +6,6 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -21,7 +20,8 @@ class BudgetDetails : AppCompatActivity() {
 
     private lateinit var btnBudgetSetup: Button
     private lateinit var etBudget: EditText
-    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var budgetSharedPreferences: SharedPreferences
+    private lateinit var transactionSharedPreferences: SharedPreferences
     private lateinit var editor: SharedPreferences.Editor
     private lateinit var progressBarBudget: CircularProgressIndicator
     private lateinit var tvProgressPercentage: TextView
@@ -69,8 +69,9 @@ class BudgetDetails : AppCompatActivity() {
             }
         }
 
-        sharedPreferences = getSharedPreferences("Budget", MODE_PRIVATE)
-        editor = sharedPreferences.edit()
+        budgetSharedPreferences = getSharedPreferences("Budget", MODE_PRIVATE)
+        transactionSharedPreferences = getSharedPreferences("TransactionData", MODE_PRIVATE)
+        editor = budgetSharedPreferences.edit()
 
         loadSavedData()
 
@@ -79,20 +80,29 @@ class BudgetDetails : AppCompatActivity() {
         if(!budgetValueString.isNullOrEmpty()){
             try {
                 val budgetValue = budgetValueString.toFloat()
-                updateProgress(budgetValue)
                 editor.putFloat("budget", budgetValue)
                 editor.apply()
-                loadSavedData()
+                updateProgress(budgetValue)
             } catch (e: NumberFormatException) {
                 Toast.makeText(this, "Invalid budget amount", Toast.LENGTH_SHORT).show()
             }
         }
 
         btnBudgetSetup.setOnClickListener {
-            val newFragment = MonthlyBudgetSetup()
-            val trans = supportFragmentManager.beginTransaction()
-            trans.replace(R.id.main, newFragment)
-            trans.commit()
+            val budgetAmount = etBudget.text.toString()
+            if (budgetAmount.isNotEmpty()) {
+                try {
+                    val budgetValue = budgetAmount.toFloat()
+                    editor.putFloat("budget", budgetValue)
+                    editor.apply()
+                    updateProgress(budgetValue)
+                    Toast.makeText(this, "Budget updated successfully", Toast.LENGTH_SHORT).show()
+                } catch (e: NumberFormatException) {
+                    Toast.makeText(this, "Please enter a valid budget amount", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "Please enter a budget amount", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -116,14 +126,14 @@ class BudgetDetails : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun loadSavedData() {
-        val budgetValue = sharedPreferences.getFloat("budget", 0.0f)
+        val budgetValue = budgetSharedPreferences.getFloat("budget", 0.0f)
         etBudget.setText(budgetValue.toString())
         updateProgress(budgetValue)
     }
 
     private fun updateProgress(budgetValue: Float) {
         if (budgetValue > 0) {
-            val totalExpense = sharedPreferences.getFloat("totalExpense", 0.0f)
+            val totalExpense = transactionSharedPreferences.getFloat("totalExpense", 0.0f)
             val progress = (totalExpense / budgetValue) * 100
             val progressInt = progress.toInt().coerceIn(0, 100)
             

@@ -82,20 +82,21 @@ class TransactionAdapter(private val transactions: List<Transaction>) :
             val updatedJson = gson.toJson(mutableTransactions)
             editor.putString("transactions_list", updatedJson)
 
-            // Update total income/expense
+            // Get current totals
             val previousIncome = sharedPref.getFloat("totalIncome", 0.0f)
             val previousExpense = sharedPref.getFloat("totalExpense", 0.0f)
 
+            // Update totals based on transaction type
             if (isIncome) {
                 editor.putFloat("totalIncome", previousIncome - deletedAmount)
             } else {
-                editor.putFloat("totalExpense", previousExpense - deletedAmount)
+                editor.putFloat("totalExpense", previousExpense - Math.abs(deletedAmount))
             }
 
-            // Update total balance
-            val totalIncome = if (isIncome) previousIncome - deletedAmount else previousIncome
-            val totalExpense = if (!isIncome) previousExpense - deletedAmount else previousExpense
-            editor.putFloat("totalBalance", totalIncome - totalExpense)
+            // Calculate and update total balance
+            val newIncome = if (isIncome) previousIncome - deletedAmount else previousIncome
+            val newExpense = if (!isIncome) previousExpense - Math.abs(deletedAmount) else previousExpense
+            editor.putFloat("totalBalance", newIncome - newExpense)
 
             editor.apply()
             Toast.makeText(context, "Transaction deleted successfully", Toast.LENGTH_SHORT).show()
